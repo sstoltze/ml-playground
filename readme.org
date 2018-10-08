@@ -1,0 +1,6 @@
+#+AUTHOR: Simon Stoltze
+#+EMAIL: sstoltze@gmail.com
+* Overview
+A repository for playing around with machine learning tools and frameworks. This compliments and should possibly have been combined with my other repository on [[https://github.com/sstoltze/tda-playground][topological data analysis]].
+* Common Lisp Machine Learning Library
+I've played around a bit with [[https://github.com/mmaul/clml][clml]], a machine learning framework written in common lisp. This code has been moved here from [[https://github.com/sstoltze/lisp-ml-test]], where the original should still be available along with a small script demonstrating an issue I had with reading decimals in lisp. So far there are no changes to the code base, but this may change if I feel like it.

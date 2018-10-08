@@ -1,0 +1,106 @@
+#+AUTHOR: Simon Stoltze
+#+EMAIL: sstoltze@gmail.com
+* Overview
+This file is meant as a starting point for writing stan programs and how to use them in combination with org-babel to do literate programming. A guide for most of this can be found at [[https://orgmode.org/worg/org-contrib/babel/languages/ob-doc-stan.html]].
+
+* Simple example
+:PROPERTIES:
+:header-args: :tangle overview-model.stan
+:END:
+This is a simple example to demonstrate how everything works. First, write a small stan program:
+#+NAME: model-stan
+#+BEGIN_SRC stan :file model.stan :results silent
+  data {
+    int<lower=1> N; // N samples
+    vector[N] x;
+  }
+
+  parameters {
+    real mu;
+    real<lower=0> sigma; // sigma is positive
+  }
+
+  model {
+    x ~ normal(mu, sigma); // We expect the input data to be normally distributed, norm mu and mean sigma
+  }
+
+#+END_SRC
+
+The result of evaluating this is a file with the code, found in [[./model.stan]]. This file can then be imported into other source-blocks.
+** R
+:PROPERTIES:
+:header-args: :results output :tangle r-stan.R :session *R-stan*
+:END:
+#+BEGIN_SRC R :results silent
+  set.seed(33)
+
+  N <- 50
+  x <- rnorm(N, 20, 3)
+#+END_SRC
+
+Note that the following code takes a little while to run.
+#+BEGIN_SRC R :var model=model-stan
+  library(rstan)
+  rstan_options(auto_write = TRUE)
+
+  fit <- stan(file=model, data=list(N=N, x=x), chains=1)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+SAMPLING FOR MODEL 'model' NOW (CHAIN 1).
+
+Gradient evaluation took 6e-06 seconds
+1000 transitions using 10 leapfrog steps per transition would take 0.06 seconds.
+Adjust your expectations accordingly!
+
+
+Iteration:    1 / 2000 [  0%]  (Warmup)
+Iteration:  200 / 2000 [ 10%]  (Warmup)
+Iteration:  400 / 2000 [ 20%]  (Warmup)
+Iteration:  600 / 2000 [ 30%]  (Warmup)
+Iteration:  800 / 2000 [ 40%]  (Warmup)
+Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Iteration: 2000 / 2000 [100%]  (Sampling)
+
+ Elapsed Time: 0.019763 seconds (Warm-up)
+               0.014523 seconds (Sampling)
+               0.034286 seconds (Total)
+#+end_example
+
+#+BEGIN_SRC R
+  print(fit)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+Inference for Stan model: model.
+1 chains, each with iter=2000; warmup=1000; thin=1;
+post-warmup draws per chain=1000, total post-warmup draws=1000.
+
+        mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff Rhat
+mu     20.52    0.01 0.38  19.76  20.27  20.51  20.77  21.27   723    1
+sigma   2.62    0.01 0.28   2.14   2.44   2.59   2.77   3.23   749    1
+lp__  -71.35    0.05 1.13 -74.23 -71.71 -70.99 -70.58 -70.32   472    1
+
+Samples were drawn using NUTS(diag_e) at Mon Oct  8 14:52:54 2018.
+For each parameter, n_eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor on split chains (at
+convergence, Rhat=1).
+#+end_example
+
+#+BEGIN_SRC R :results graphics :file ./images/example.png
+  plot(fit)
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example.png]]
+
+After running this, we can see the plot:
+[[./images/example.png]]

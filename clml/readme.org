@@ -1,0 +1,4 @@
+#+AUTHOR: Simon Stoltze
+#+EMAIL: sstoltze@gmail.com
+* CLML
+This is a copy of an earlier [[https://github.com/sstoltze/lisp-ml-test][repository]] created to test the [[https://github.com/mmaul/clml][clml]] library for doing machine learning in Common Lisp. This is an unchanged copy, which reimplements (most of) a tutorial written in Python which can be found [[http://blog.keyrus.co.uk/a_simple_approach_to_predicting_customer_churn.html][here]].
