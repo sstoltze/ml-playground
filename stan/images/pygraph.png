@@ -1,0 +1,2 @@
+WARNING:pystan:Deprecation warning. In future, use ArviZ library (`pip install arviz`)
+INFO:matplotlib.font_manager:Could not open font file /usr/share/fonts/truetype/unifont/unifont_sample.ttf

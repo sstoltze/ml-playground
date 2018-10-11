@@ -104,3 +104,91 @@ convergence, Rhat=1).
 
 After running this, we can see the plot:
 [[./images/example.png]]
+
+** Python
+:PROPERTIES:
+:header-args: :results output :tangle py-stan.py :session *Python*
+:END:
+
+
+To use Python, first we need to import the library. We will also import pandas to generate some random data for testing.
+#+BEGIN_SRC python :results silent
+import pystan
+import pandas as pd
+import numpy as np
+import scipy as sp
+import arviz # ??? matplotlib replacement?
+#+END_SRC
+
+The we generate the testing data:
+#+BEGIN_SRC python :results silent
+np.random.seed(33)
+
+N = 50
+x = np.random.randn(N)
+#+END_SRC
+
+Then we can compile the model, which again takes a bit of time.
+#+BEGIN_SRC python :results silent :var model=model-stan :async
+stan_model = pystan.StanModel(file=model)
+#+END_SRC
+
+And then run the code as we did before:
+
+#+BEGIN_SRC python
+fit = stan_model.sampling(data={'N': N, 'x' : x}, chains=1)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+Gradient evaluation took 9e-06 seconds
+1000 transitions using 10 leapfrog steps per transition would take 0.09 seconds.
+Adjust your expectations accordingly!
+
+
+Iteration:    1 / 2000 [  0%]  (Warmup)
+Iteration:  200 / 2000 [ 10%]  (Warmup)
+Iteration:  400 / 2000 [ 20%]  (Warmup)
+Iteration:  600 / 2000 [ 30%]  (Warmup)
+Iteration:  800 / 2000 [ 40%]  (Warmup)
+Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Iteration: 2000 / 2000 [100%]  (Sampling)
+
+ Elapsed Time: 0.028882 seconds (Warm-up)
+               0.029761 seconds (Sampling)
+               0.058643 seconds (Total)
+#+end_example
+
+To see what happened, we can print the result.
+#+BEGIN_SRC python
+print(fit)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+Inference for Stan model: anon_model_39de6566d10813b7cfe15e72b8d61dd1.
+1 chains, each with iter=2000; warmup=1000; thin=1;
+post-warmup draws per chain=1000, total post-warmup draws=1000.
+
+        mean se_mean     sd   2.5%    25%    50%    75%  97.5%  n_eff   Rhat
+mu     -0.19  5.6e-3   0.14  -0.47  -0.28  -0.19   -0.1   0.07    597    1.0
+sigma   0.99  3.9e-3    0.1   0.81   0.92   0.98   1.06   1.22    690    1.0
+lp__  -23.58    0.05   0.99 -26.14 -23.98 -23.28 -22.88 -22.64    369    1.0
+
+Samples were drawn using NUTS at Thu Oct 11 17:32:59 2018.
+For each parameter, n_eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor on split chains (at
+convergence, Rhat=1).
+#+end_example
+
+#+BEGIN_SRC python :results graphics :file "./images/pygraph.png"
+fit.plot()
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/pygraph.png]]
