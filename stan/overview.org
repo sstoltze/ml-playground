@@ -50,6 +50,14 @@ Note that the following code takes a little while to run.
 #+RESULTS:
 #+begin_example
 
+Loading required package: ggplot2
+Loading required package: StanHeaders
+rstan (Version 2.17.4, GitRev: 2e1f913d3ca3)
+For execution on a local, multicore CPU with excess RAM we recommend calling
+options(mc.cores = parallel::detectCores()).
+To avoid recompilation of unchanged Stan programs, we recommend calling
+rstan_options(auto_write = TRUE)
+
 SAMPLING FOR MODEL 'model' NOW (CHAIN 1).
 
 Gradient evaluation took 6e-06 seconds
@@ -70,9 +78,9 @@ Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Iteration: 2000 / 2000 [100%]  (Sampling)
 
- Elapsed Time: 0.019763 seconds (Warm-up)
-               0.014523 seconds (Sampling)
-               0.034286 seconds (Total)
+ Elapsed Time: 0.020805 seconds (Warm-up)
+               0.01525 seconds (Sampling)
+               0.036055 seconds (Total)
 #+end_example
 
 #+BEGIN_SRC R
@@ -90,7 +98,7 @@ mu     20.52    0.01 0.38  19.76  20.27  20.51  20.77  21.27   723    1
 sigma   2.62    0.01 0.28   2.14   2.44   2.59   2.77   3.23   749    1
 lp__  -71.35    0.05 1.13 -74.23 -71.71 -70.99 -70.58 -70.32   472    1
 
-Samples were drawn using NUTS(diag_e) at Mon Oct  8 14:52:54 2018.
+Samples were drawn using NUTS(diag_e) at Thu Oct 25 00:36:36 2018.
 For each parameter, n_eff is a crude measure of effective sample size,
 and Rhat is the potential scale reduction factor on split chains (at
 convergence, Rhat=1).
@@ -148,8 +156,8 @@ fit = stan_model.sampling(data={'N': N, 'x' : x}, chains=1)
 
 #+RESULTS:
 #+begin_example
-Gradient evaluation took 8e-06 seconds
-1000 transitions using 10 leapfrog steps per transition would take 0.08 seconds.
+Gradient evaluation took 1.5e-05 seconds
+1000 transitions using 10 leapfrog steps per transition would take 0.15 seconds.
 Adjust your expectations accordingly!
 
 
@@ -166,9 +174,9 @@ Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Iteration: 2000 / 2000 [100%]  (Sampling)
 
- Elapsed Time: 0.019506 seconds (Warm-up)
-               0.020947 seconds (Sampling)
-               0.040453 seconds (Total)
+ Elapsed Time: 0.025134 seconds (Warm-up)
+               0.020288 seconds (Sampling)
+               0.045422 seconds (Total)
 #+end_example
 
 To see what happened, we can print the result.
@@ -183,24 +191,33 @@ Inference for Stan model: anon_model_39de6566d10813b7cfe15e72b8d61dd1.
 post-warmup draws per chain=1000, total post-warmup draws=1000.
 
         mean se_mean     sd   2.5%    25%    50%    75%  97.5%  n_eff   Rhat
-mu      -0.2  5.0e-3   0.14  -0.47  -0.29   -0.2   -0.1   0.08    805    1.0
-sigma   0.98  3.3e-3    0.1   0.81   0.91   0.98   1.04   1.19    883    1.0
-lp__   -23.6    0.04   0.99 -26.39 -23.95 -23.32 -22.88 -22.63    506    1.0
+mu     -0.19  5.5e-3   0.14  -0.48  -0.29  -0.18  -0.09   0.08    666    1.0
+sigma   0.99  4.4e-3   0.11    0.8   0.92   0.98   1.06   1.21    607    1.0
+lp__   -23.7    0.05   0.97 -26.16 -24.13 -23.44 -22.96 -22.65    451    1.0
 
-Samples were drawn using NUTS at Wed Oct 24 19:24:41 2018.
+Samples were drawn using NUTS at Thu Oct 25 00:35:02 2018.
 For each parameter, n_eff is a crude measure of effective sample size,
 and Rhat is the potential scale reduction factor on split chains (at
 convergence, Rhat=1).
 #+end_example
 
-I can't get Arviz to generate any plots, I am probably doing something wrong. The following code generates an array of matplotlib Axes, but I am unable to show them.
+I can't get Arviz to generate any plots, I am probably doing something wrong. The following code generates an array of matplotlib Axes, but I am unable to show them. Possibly arviz/something else requires an IPython notebook. I can still generate plots the old way with 'fit.plot().savefig()'.
 
 #+BEGIN_SRC python :results graphics :file "./images/pygraph.png"
-#fit.plot()
-#az.plot_density(fit, var_names=['mu', 'sigma'])
+# Arviz, doesn't work at the moment
+az.plot_density(fit, var_names=['mu', 'sigma'])
 #+END_SRC
 
 #+RESULTS:
 [[file:./images/pygraph.png]]
 
-[[./image/pygraph.png]]
+#+BEGIN_SRC python :results silent
+# Old fashioned, generates a warning but works
+fit.plot().savefig("./images/pygraph-savefig.png")
+#+END_SRC
+
+New plot:
+[[./images/pygraph.png]]
+
+Old plot:
+[[./images/pygraph-savefig.png]]

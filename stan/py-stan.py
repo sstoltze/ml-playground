@@ -23,5 +23,8 @@ fit = stan_model.sampling(data={'N': N, 'x' : x}, chains=1)
 
 print(fit)
 
-#fit.plot()
-#az.plot_density(fit, var_names=['mu', 'sigma'])
+# Arviz, doesn't work at the moment
+az.plot_density(fit, var_names=['mu', 'sigma'])
+
+# Old fashioned, generates a warning but works
+fit.plot().savefig("./images/pygraph-savefig.png")
