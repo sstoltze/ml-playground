@@ -1,0 +1,12 @@
+#+AUTHOR: Simon Stoltze
+#+EMAIL: sstoltze@gmail.com
+#+DATE: 2018-11-11
+#+OPTIONS: toc:nil title:nil author:nil email:nil date:nil creator:nil
+* Colour-recognizer
+
+A quick test of [[https://www.tensorflow.org][TensorFlow]], written to learn a bit about the framework.
+
+The idea is to train on a collection of images, divided into three sets which we will refer to as /red/, /green/ and /blue/. When handed a new image, the network should then spit out a (R,G,B) triple for the image with the values generated from the classifiers along with their confidence levels.
+This may change when I start working on it. For now, the test data has been found and I've started working on the code.
+
+The training and test dataset has been copied from [[https://www.kaggle.com/ayanzadeh93/color-classification]], with some minor cleanup.
