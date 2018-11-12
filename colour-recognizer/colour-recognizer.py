@@ -1,3 +1,4 @@
+# Based on https://www.tensorflow.org/tutorials/keras/basic_classification
 import tensorflow as tf
 from tensorflow import keras
 import numpy as np
@@ -38,18 +39,33 @@ def load_test_data():
     train_labels = tf.constant(train_labels)
     test_data = tf.constant(test_data)
     test_labels = tf.constant(test_labels)
-    print("data:", train_data.shape, " - labels:", train_labels.shape)
-    print("map_fn:", tf.map_fn(image_parse_function, train_data).shape)
-    return ((tf.map_fn(image_parse_function, train_data), train_labels),
-            (tf.map_fn(image_parse_function, test_data),  test_labels))
-
-
-def preprocess_data(train, test):
-    # For fashion_mnist:
-    return train / 255.0, test / 255.0
+    return ((tf.map_fn(image_parse_function,
+                       train_data,
+                       # Required since return-type is different from input
+                       dtype=tf.float32),
+             train_labels),
+            (tf.map_fn(image_parse_function,
+                       test_data,
+                       # Required since return-type is different from input
+                       dtype=tf.float32),
+             test_labels))
 
 
 (train_images, train_labels), (test_images, test_labels) = load_test_data()
+
+# The return dtype should be float32 with values between 0 and 1,
+# hence we can define our model as in the tutorial.
+# This leads to an accuracy of 0.1-0.2 on the test dataset
+tutorial_model = keras.Sequential([
+    # Make a 1d array instead of 2d
+    keras.layers.Flatten(input_shape=(28, 28, 3)),
+    # 128 neuron layer
+    keras.layers.Dense(128, activation=tf.nn.relu),
+    # Softmax returns a probablility for each option
+    keras.layers.Dense(len(class_names), activation=tf.nn.softmax)
+])
+
+# Let's try to optimize the model
 model = keras.Sequential([
     # Make a 1d array instead of 2d
     keras.layers.Flatten(input_shape=(28, 28, 3)),
@@ -66,4 +82,9 @@ model.compile(optimizer=tf.train.AdamOptimizer(),
               # Uses correct / total predictions to measure success
               metrics=['accuracy'])
 
-# model.fit(train_images, train_labels, epochs=5, steps_per_epoch=101)
+# This step takes a while
+model.fit(train_images, train_labels, epochs=5, steps_per_epoch=30)
+
+# Test the accuracy
+test_loss, test_acc = model.evaluate(test_images, test_labels, steps=30)
+print('Test accuracy:', test_acc)
