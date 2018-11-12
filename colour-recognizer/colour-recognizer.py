@@ -40,7 +40,8 @@ def load_test_data():
     test_labels = tf.constant(test_labels)
     print("data:", train_data.shape, " - labels:", train_labels.shape)
     print("map_fn:", tf.map_fn(image_parse_function, train_data).shape)
-    return (tf.map_fn(image_parse_function, train_data), train_labels), (tf.map_fn(image_parse_function, test_data), test_labels)
+    return ((tf.map_fn(image_parse_function, train_data), train_labels),
+            (tf.map_fn(image_parse_function, test_data),  test_labels))
 
 
 def preprocess_data(train, test):
@@ -65,4 +66,4 @@ model.compile(optimizer=tf.train.AdamOptimizer(),
               # Uses correct / total predictions to measure success
               metrics=['accuracy'])
 
-#model.fit(train_images, train_labels, epochs=5, steps_per_epoch=101)
+# model.fit(train_images, train_labels, epochs=5, steps_per_epoch=101)
